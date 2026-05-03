@@ -1,28 +1,27 @@
-# 🛡️ SAFE-RUN
+# SAFE-RUN : Linux Sandboxing CLI
 
-![Rust](https://img.shields.io/badge/rust-v1.70+-orange?style=for-the-badge&logo=rust)
-![Linux](https://img.shields.io/badge/Linux-5.13%2B-blue?style=for-the-badge&logo=linux)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+safe-run est un exécuteur de commandes en ligne (CLI) conçu pour les environnements Linux. Développé en Rust, il exploite nativement les API de sécurité du noyau (Landlock et Seccomp-BPF) pour isoler les processus non fiables et protéger le système hôte contre les exécutions malveillantes.
 
-**SAFE-RUN** est un exécuteur de commandes ultra-sécurisé (Sandbox) pour Linux, écrit en Rust. Il combine la puissance de **Landlock** et **Seccomp** pour emprisonner n'importe quel processus et empêcher les fuites de données ou les actions malveillantes.
+## Installation
 
-> **💡 Pourquoi safe-run ?** Même un simple script peut cacher des commandes malveillantes. `safe-run` garantit que le processus ne touchera pas à vos fichiers sensibles et ne fera aucun appel système inattendu.
-
----
-
-## ✨ Fonctionnalités clés
-
-*   🔒 **Isolation Système de Fichiers (Landlock)** : Le processus lancé n'a aucun droit de lecture/écriture en dehors de ce qui est strictement nécessaire.
-*   🛑 **Filtrage des Appels Système (Seccomp-BPF)** : Abat instantanément le processus (`KillProcess`) s'il tente d'utiliser le réseau, de modifier la mémoire système ou d'élever ses privilèges.
-*   ⚡ **Performance Native** : Écrit en Rust, l'impact sur le temps d'exécution est quasi-nul.
-*   🎛️ **Mode Souple optionnel** : Possibilité de relâcher Seccomp en cas de besoin tout en gardant Landlock actif.
-
----
-
-## 🚀 Installation
-
-Prérequis : Un système Linux récent (Noyau 5.13 ou supérieur) et `cargo` installé.
+Nécessite un noyau Linux 5.13+ et Cargo.
 ```bash
 git clone [https://github.com/Yamabushi-06/safe-run.git](https://github.com/Yamabushi-06/safe-run.git)
 cd safe-run
 cargo build --release
+## Utilisation
+```
+# Utilisation 
+L'outil propose deux niveaux d'isolation selon vos contraintes de sécurité :
+```bash
+# 1. Mode Strict (Bunker par défaut)
+# Active Landlock (fichiers) et Seccomp (processeur).
+safe-run cat /etc/shadow
+
+# 2. Mode Souple (Isolation Fichiers Uniquement)
+# Désactive Seccomp pour autoriser le réseau, Landlock reste actif.
+safe-run --allow-sys curl [https://api.github.com](https://api.github.com)
+
+# 3. Afficher les options
+safe-run --help
+```
